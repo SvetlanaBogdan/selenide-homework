@@ -16,7 +16,12 @@ jobs:
           distribution: 'adopt'
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-      - name: Start SUT
-        run: java -jar ./artifacts/app-card-delivery.jar &
+      - - name: Start SUT
+      - run: java -jar ./artifacts/app-card-delivery.jar &
+
+      - name: Wait for SUT
+      - run: sleep 5
+
       - name: Build with Gradle
-        run: ./gradlew test --info -Dselenide.headless=true
+      - run:
+          ./gradlew test --info -Dselenide.headless=true: ./gradlew test --info -Dselenide.headless=true

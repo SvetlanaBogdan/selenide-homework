@@ -21,25 +21,33 @@ public class CardDeliveryTest {
     @Test
     void shouldSubmitFormSuccessfully() {
 
-        String formattedDate = LocalDate.now()
+        String planningDate = LocalDate.now()
                 .plusDays(3)
                 .format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
 
-        $("[data-test-id=city] input").setValue("Ка");
-        $$(".menu-item").findBy(text("Казань")).click();
+        // город (БЕЗ выпадающего списка!)
+        $("[data-test-id=city] input").setValue("Казань");
 
-        $("[data-test-id=date] input").doubleClick().sendKeys(Keys.BACK_SPACE);
-        $("[data-test-id=date] input").setValue(formattedDate);
+        // дата (очищаем и вводим новую)
+        $("[data-test-id=date] input")
+                .sendKeys(Keys.chord(Keys.COMMAND, "a"), Keys.BACK_SPACE);
+        $("[data-test-id=date] input").setValue(planningDate);
 
+        // имя
         $("[data-test-id=name] input").setValue("Иван Петров");
+
+        // телефон
         $("[data-test-id=phone] input").setValue("+79000000000");
 
-        $("[data-test-id=agreement] .checkbox__box").click();
+        // чекбокс
+        $("[data-test-id=agreement]").click();
 
+        // кнопка
         $$("button").findBy(text("Забронировать")).click();
 
+        // проверка (ВАЖНО: проверяем дату!)
         $(".notification__content")
                 .shouldBe(visible, Duration.ofSeconds(15))
-                .shouldHave(text("Успешно"));
+                .shouldHave(text("Встреча успешно забронирована на " + planningDate));
     }
 }
